@@ -3,93 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Draft de Softball</title>
+    <title>Draft de Macos</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
             font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
+            margin: 0;
+            padding: 10px;
             background-color: #f4f4f4;
             color: #333;
         }
-        .draft-container {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            max-width: 1200px;
-            margin-top: 20px;
-            gap: 20px;
+        .app-container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            font-size: 1.5rem;
+            margin: 10px 0;
+        }
+        .current-pick-info {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #007bff;
+            padding: 8px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         .team-panel {
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            padding: 20px;
-            width: 45%;
+            padding: 15px;
+            margin-bottom: 15px;
         }
-        .player-pool {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            padding: 20px;
-            width: 45%;
-        }
-        h2 {
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        .player-list {
-            list-style: none;
-            padding: 0;
-            max-height: 500px;
-            overflow-y: auto;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 10px;
-        }
-        .player-list li {
-            background-color: #e9ecef;
-            margin-bottom: 8px;
-            padding: 10px;
-            border-radius: 5px;
+        .team-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: all 0.2s ease;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
         }
-        .player-list li:hover {
-            background-color: #d0d7dd;
+        .team-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2c3e50;
         }
-        .player-actions {
+        .manager-info {
+            font-size: 0.9rem;
+            background-color: #f8f9fa;
+            padding: 8px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .manager-name {
+            font-weight: bold;
+        }
+        .manager-actions {
+            display: flex;
+            gap: 5px;
+            margin-top: 5px;
+        }
+        .position-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .position-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .position-name {
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .position-player {
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .position-actions {
             display: flex;
             gap: 5px;
         }
         .btn {
-            padding: 5px 10px;
+            padding: 6px 10px;
             border-radius: 4px;
             cursor: pointer;
             border: none;
             color: white;
-            font-size: 14px;
+            font-size: 0.8rem;
             transition: background-color 0.2s ease;
         }
         .btn-select {
@@ -111,20 +123,62 @@
         .btn-remove:hover {
             background-color: #c82333;
         }
+        .btn-manager {
+            background-color: #6f42c1;
+        }
+        .btn-manager:hover {
+            background-color: #5a3d8e;
+        }
+        .player-pool {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .player-list {
+            list-style: none;
+            padding: 0;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px;
+        }
+        .player-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            margin-bottom: 5px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+        }
+        .player-name {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .player-actions {
+            display: flex;
+            gap: 5px;
+        }
         .controls {
             display: flex;
             justify-content: center;
-            gap: 20px;
-            margin-top: 20px;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
         }
         .controls button {
             background-color: #007bff;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 10px 15px;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 0.9rem;
             transition: background-color 0.2s ease;
         }
         .controls button:hover {
@@ -136,30 +190,14 @@
         .controls button.download-btn:hover {
             background-color: #5a6268;
         }
-        .current-pick-info {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 1.1em;
-            font-weight: bold;
-            color: #007bff;
-        }
         .setup-screen {
-            width: 80%;
-            max-width: 600px;
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .setup-screen h1 {
-            color: #2c3e50;
-            margin-bottom: 30px;
+            padding: 20px;
+            margin-bottom: 15px;
         }
         .setup-form {
-            width: 100%;
             display: flex;
             flex-direction: column;
             gap: 15px;
@@ -171,12 +209,14 @@
         .form-group label {
             margin-bottom: 5px;
             font-weight: bold;
+            font-size: 0.9rem;
         }
         .form-group input, .form-group textarea {
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            font-size: 16px;
+            font-size: 1rem;
+            width: 100%;
         }
         .form-group textarea {
             min-height: 100px;
@@ -186,12 +226,13 @@
             background-color: #28a745;
             color: white;
             border: none;
-            padding: 12px 20px;
+            padding: 12px;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 18px;
-            margin-top: 20px;
+            font-size: 1rem;
+            margin-top: 10px;
             transition: background-color 0.2s ease;
+            width: 100%;
         }
         .start-draft-btn:hover {
             background-color: #218838;
@@ -199,271 +240,169 @@
         .hidden {
             display: none;
         }
-        .team1 {
-            background-color: #e7f3ff;
-        }
-        .team2 {
-            background-color: #ffebeb;
-        }
-        .add-players-btn {
-            background-color: #17a2b8;
-            margin-bottom: 15px;
-        }
-        .add-players-btn:hover {
-            background-color: #138496;
-        }
-        .player-input-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .player-input-container input {
-            flex-grow: 1;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .player-input-container button {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
         .position-filled {
             background-color: #d4edda;
         }
-        .position-actions {
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
             display: flex;
-            gap: 5px;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 15px;
         }
-        .manager-section {
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-radius: 5px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
         }
-        .manager-name {
+        .modal-title {
+            font-size: 1.2rem;
             font-weight: bold;
+            margin: 0;
         }
-        .manager-actions {
-            display: flex;
-            gap: 5px;
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+        @media (min-width: 768px) {
+            .draft-container {
+                display: flex;
+                gap: 15px;
+            }
+            .team-column {
+                flex: 1;
+            }
+            .player-pool {
+                margin-bottom: 0;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Pantalla de configuración inicial -->
-    <div id="setupScreen" class="setup-screen">
-        <h1>Configuración del Draft</h1>
-        <div class="setup-form">
-            <div class="form-group">
-                <label for="team1Name">Nombre del Equipo 1:</label>
-                <input type="text" id="team1Name" placeholder="Ej: Los Tigres" required>
-            </div>
-            <div class="form-group">
-                <label for="team2Name">Nombre del Equipo 2:</label>
-                <input type="text" id="team2Name" placeholder="Ej: Las Águilas" required>
-            </div>
-            <div class="form-group">
-                <label for="playerList">Lista de Jugadores (uno por línea o separados por comas):</label>
-                <textarea id="playerList" placeholder="Ej: Juan Pérez&#10;Carlos Gómez&#10;María Rodríguez&#10;Luis Hernández&#10;Ana Torres&#10;Pedro Díaz&#10;Laura Soto&#10;Miguel Reyes&#10;Sofía Vargas&#10;Roberto Cruz&#10;Elena Ramos&#10;Andrés Castro&#10;Gabriela Gil&#10;Fernando Vega&#10;Isabel Núñez&#10;Diego Molina&#10;Valeria Pineda&#10;José Ortiz&#10;Camila Blanco&#10;Ricardo Marín" required></textarea>
-            </div>
-            <div class="form-group">
-                <label for="managerList">Lista de Managers (uno por línea o separados por comas):</label>
-                <textarea id="managerList" placeholder="Ej: Manager A&#10;Manager B&#10;Manager C" required></textarea>
+    <div class="app-container">
+        <!-- Pantalla de configuración inicial -->
+        <div id="setupScreen" class="setup-screen">
+            <h1>Configuración del Draft</h1>
+            <div class="setup-form">
+                <div class="form-group">
+                    <label for="team1Name">Nombre del Equipo 1:</label>
+                    <input type="text" id="team1Name" placeholder="Ej: Los Tigres" required>
+                </div>
+                <div class="form-group">
+                    <label for="team2Name">Nombre del Equipo 2:</label>
+                    <input type="text" id="team2Name" placeholder="Ej: Las Águilas" required>
+                </div>
+                <div class="form-group">
+                    <label for="playerList">Lista de Jugadores (uno por línea o separados por comas):</label>
+                    <textarea id="playerList" placeholder="Ej: Juan Pérez&#10;Carlos Gómez&#10;María Rodríguez&#10;Luis Hernández&#10;Ana Torres&#10;Pedro Díaz&#10;Laura Soto&#10;Miguel Reyes&#10;Sofía Vargas&#10;Roberto Cruz&#10;Elena Ramos&#10;Andrés Castro&#10;Gabriela Gil&#10;Fernando Vega&#10;Isabel Núñez&#10;Diego Molina&#10;Valeria Pineda&#10;José Ortiz&#10;Camila Blanco&#10;Ricardo Marín" required></textarea>
+                </div>
+                <button id="startDraftBtn" class="start-draft-btn">Comenzar Draft</button>
             </div>
         </div>
-        <button id="startDraftBtn" class="start-draft-btn">Comenzar Draft</button>
-    </div>
 
-    <!-- Pantalla principal del draft (inicialmente oculta) -->
-    <div id="draftScreen" class="hidden">
-        <h1>Simulador de Draft de Softball</h1>
-        <p class="current-pick-info" id="currentPickInfo">Es el turno del <span id="currentTeamName"></span> para elegir.</p>
+        <!-- Pantalla principal del draft (inicialmente oculta) -->
+        <div id="draftScreen" class="hidden">
+            <h1>Simulador de Draft de Softball</h1>
+            <p class="current-pick-info" id="currentPickInfo">Es el turno del <span id="currentTeamName"></span> para elegir.</p>
 
-        <div class="draft-container">
-            <!-- Equipo 1 -->
-            <div class="team-panel team1">
-                <h2 id="team1Title">Equipo 1</h2>
-                
-                <div class="manager-section">
-                    <div>
-                        <span>Manager: </span>
-                        <span class="manager-name" id="team1-manager">(Sin asignar)</span>
-                    </div>
-                    <div class="manager-actions">
-                        <button class="btn btn-select" onclick="startSelectManager(1)">Asignar</button>
-                        <button class="btn btn-remove" onclick="removeManager(1)" id="team1-remove-manager" style="display: none;">Eliminar</button>
-                    </div>
-                </div>
-                
-                <table id="team1Table">
-                    <thead>
-                        <tr>
-                            <th>Posición</th>
-                            <th>Jugador</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Pitcher</td>
-                            <td id="team1-pitcher"></td>
-                            <td class="position-actions" id="team1-pitcher-actions"></td>
-                        </tr>
-                        <tr>
-                            <td>Catcher</td>
-                            <td id="team1-catcher"></td>
-                            <td class="position-actions" id="team1-catcher-actions"></td>
-                        </tr>
-                        <tr>
-                            <td>1ra Base</td>
-                            <td id="team1-firstBase"></td>
-                            <td class="position-actions" id="team1-firstBase-actions"></td>
-                        </tr>
-                        <tr>
-                            <td>2da Base</td>
-                            <td id="team1-secondBase"></td>
-                            <td class="position-actions" id="team1-secondBase-actions"></td>
-                        </tr>
-                        <tr>
-                            <td>3ra Base</td>
-                            <td id="team1-thirdBase"></td>
-                            <td class="position-actions" id="team1-thirdBase-actions"></td>
-                        </tr>
-                        <tr>
-                            <td>Shortstop</td>
-                            <td id="team1-shortstop"></td>
-                            <td class="position-actions" id="team1-shortstop-actions"></td>
-                        </tr>
-                        <tr>
-                            <td>J. Izquierdo</td>
-                            <td id="team1-leftField"></td>
-                            <td class="position-actions" id="team1-leftField-actions"></td>
-                        </tr>
-                        <tr>
-                            <td>J. Central</td>
-                            <td id="team1-centerField"></td>
-                            <td class="position-actions" id="team1-centerField-actions"></td>
-                        </tr>
-                        <tr>
-                            <td>J. Derecho</td>
-                            <td id="team1-rightField"></td>
-                            <td class="position-actions" id="team1-rightField-actions"></td>
-                        </tr>
-                        <tr>
-                            <td>DH/Extras</td>
-                            <td id="team1-extra"></td>
-                            <td class="position-actions" id="team1-extra-actions"></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Jugadores disponibles en el centro -->
-            <div class="player-pool">
-                <h2 id="selectionTitle">Jugadores Disponibles</h2>
-                <div id="selectionContainer">
-                    <button id="addPlayersBtn" class="controls button add-players-btn" onclick="showAddPlayers()">Agregar más jugadores</button>
-                    <div id="addPlayersSection" class="hidden">
-                        <div class="player-input-container">
-                            <input type="text" id="newPlayerName" placeholder="Nombre del jugador">
-                            <button onclick="addNewPlayer()">Agregar</button>
+            <div class="draft-container">
+                <!-- Equipo 1 -->
+                <div class="team-column">
+                    <div class="team-panel team1">
+                        <div class="team-header">
+                            <div class="team-title" id="team1Title">Equipo 1</div>
+                        </div>
+                        
+                        <div class="manager-info">
+                            <div>Manager: <span class="manager-name" id="team1-manager">(Sin asignar)</span></div>
+                            <div class="manager-actions">
+                                <button class="btn btn-manager" onclick="startSelectManager(1)">Asignar Manager</button>
+                                <button class="btn btn-remove" onclick="removeManager(1)" id="team1-remove-manager" style="display: none;">Eliminar</button>
+                            </div>
+                        </div>
+                        
+                        <div id="team1-positions">
+                            <!-- Posiciones se generarán dinámicamente -->
                         </div>
                     </div>
-                    <ul id="availablePlayers" class="player-list">
-                        <!-- Jugadores se cargarán aquí -->
-                    </ul>
+                </div>
+
+                <!-- Equipo 2 -->
+                <div class="team-column">
+                    <div class="team-panel team2">
+                        <div class="team-header">
+                            <div class="team-title" id="team2Title">Equipo 2</div>
+                        </div>
+                        
+                        <div class="manager-info">
+                            <div>Manager: <span class="manager-name" id="team2-manager">(Sin asignar)</span></div>
+                            <div class="manager-actions">
+                                <button class="btn btn-manager" onclick="startSelectManager(2)">Asignar Manager</button>
+                                <button class="btn btn-remove" onclick="removeManager(2)" id="team2-remove-manager" style="display: none;">Eliminar</button>
+                            </div>
+                        </div>
+                        
+                        <div id="team2-positions">
+                            <!-- Posiciones se generarán dinámicamente -->
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Equipo 2 -->
-            <div class="team-panel team2">
-                <h2 id="team2Title">Equipo 2</h2>
-                
-                <div class="manager-section">
-                    <div>
-                        <span>Manager: </span>
-                        <span class="manager-name" id="team2-manager">(Sin asignar)</span>
-                    </div>
-                    <div class="manager-actions">
-                        <button class="btn btn-select" onclick="startSelectManager(2)">Asignar</button>
-                        <button class="btn btn-remove" onclick="removeManager(2)" id="team2-remove-manager" style="display: none;">Eliminar</button>
+            <!-- Jugadores disponibles -->
+            <div class="player-pool">
+                <h2 id="selectionTitle">Jugadores Disponibles</h2>
+                <button id="addPlayersBtn" class="btn btn-select" onclick="showAddPlayers()">Agregar más jugadores</button>
+                <div id="addPlayersSection" class="hidden" style="margin-top: 10px;">
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <input type="text" id="newPlayerName" placeholder="Nombre del jugador" style="flex: 1; padding: 8px;">
+                        <button class="btn btn-select" onclick="addNewPlayer()">Agregar</button>
                     </div>
                 </div>
-                
-                <table id="team2Table">
-                    <thead>
-                        <tr>
-                            <th>Posición</th>
-                            <th>Jugador</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Pitcher</td>
-                            <td id="team2-pitcher"></td>
-                            <td class="position-actions" id="team2-pitcher-actions"></td>
-                        </tr>
-                        <tr>
-                            <td>Catcher</td>
-                            <td id="team2-catcher"></td>
-                            <td class="position-actions" id="team2-catcher-actions"></td>
-                        </tr>
-                        <tr>
-                            <td>1ra Base</td>
-                            <td id="team2-firstBase"></td>
-                            <td class="position-actions" id="team2-firstBase-actions"></td>
-                        </tr>
-                        <tr>
-                            <td>2da Base</td>
-                            <td id="team2-secondBase"></td>
-                            <td class="position-actions" id="team2-secondBase-actions"></td>
-                        </tr>
-                        <tr>
-                            <td>3ra Base</td>
-                            <td id="team2-thirdBase"></td>
-                            <td class="position-actions" id="team2-thirdBase-actions"></td>
-                        </tr>
-                        <tr>
-                            <td>Shortstop</td>
-                            <td id="team2-shortstop"></td>
-                            <td class="position-actions" id="team2-shortstop-actions"></td>
-                        </tr>
-                        <tr>
-                            <td>J. Izquierdo</td>
-                            <td id="team2-leftField"></td>
-                            <td class="position-actions" id="team2-leftField-actions"></td>
-                        </tr>
-                        <tr>
-                            <td>J. Central</td>
-                            <td id="team2-centerField"></td>
-                            <td class="position-actions" id="team2-centerField-actions"></td>
-                        </tr>
-                        <tr>
-                            <td>J. Derecho</td>
-                            <td id="team2-rightField"></td>
-                            <td class="position-actions" id="team2-rightField-actions"></td>
-                        </tr>
-                        <tr>
-                            <td>DH/Extras</td>
-                            <td id="team2-extra"></td>
-                            <td class="position-actions" id="team2-extra-actions"></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <ul id="availablePlayers" class="player-list">
+                    <!-- Jugadores se cargarán aquí -->
+                </ul>
+            </div>
+
+            <div class="controls">
+                <button onclick="resetDraft()">Reiniciar Draft</button>
+                <button class="download-btn" onclick="downloadPDF()">Descargar PDF</button>
             </div>
         </div>
+    </div>
 
-        <div class="controls">
-            <button onclick="resetDraft()">Reiniciar Draft</button>
-            <button class="download-btn" onclick="downloadPDF()">Descargar Selecciones (PDF)</button>
+    <!-- Modal para selección -->
+    <div id="selectionModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Seleccionar</h3>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalContent">
+                <!-- Contenido dinámico -->
+            </div>
         </div>
     </div>
 
@@ -472,8 +411,6 @@
         // Variables globales
         let allPlayers = [];
         let availablePlayers = [];
-        let allManagers = [];
-        let availableManagers = [];
         let team1 = {
             name: "Equipo 1",
             manager: null,
@@ -495,13 +432,13 @@
         const positions = [
             { id: "pitcher", name: "Pitcher" },
             { id: "catcher", name: "Catcher" },
-            { id: "firstBase", name: "1ra Base" },
-            { id: "secondBase", name: "2da Base" },
-            { id: "thirdBase", name: "3ra Base" },
-            { id: "shortstop", name: "Shortstop" },
-            { id: "leftField", name: "J. Izquierdo" },
-            { id: "centerField", name: "J. Central" },
-            { id: "rightField", name: "J. Derecho" },
+            { id: "firstBase", name: "1B" },
+            { id: "secondBase", name: "2B" },
+            { id: "thirdBase", name: "3B" },
+            { id: "shortstop", name: "SS" },
+            { id: "leftField", name: "LF" },
+            { id: "centerField", name: "CF" },
+            { id: "rightField", name: "RF" },
             { id: "extra", name: "DH/Extra" }
         ];
 
@@ -511,18 +448,16 @@
         const team1NameInput = document.getElementById('team1Name');
         const team2NameInput = document.getElementById('team2Name');
         const playerListInput = document.getElementById('playerList');
-        const managerListInput = document.getElementById('managerList');
         const startDraftBtn = document.getElementById('startDraftBtn');
         const currentPickInfo = document.getElementById('currentPickInfo');
         const currentTeamNameSpan = document.getElementById('currentTeamName');
         const team1Title = document.getElementById('team1Title');
         const team2Title = document.getElementById('team2Title');
         const availablePlayersUl = document.getElementById('availablePlayers');
-        const addPlayersBtn = document.getElementById('addPlayersBtn');
-        const addPlayersSection = document.getElementById('addPlayersSection');
-        const newPlayerNameInput = document.getElementById('newPlayerName');
         const selectionTitle = document.getElementById('selectionTitle');
-        const selectionContainer = document.getElementById('selectionContainer');
+        const selectionModal = document.getElementById('selectionModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalContent = document.getElementById('modalContent');
 
         // Inicializar el draft
         function initializeDraft() {
@@ -540,12 +475,6 @@
                 .map(player => player.trim())
                 .filter(player => player !== "");
             
-            // Obtener lista de managers
-            const managersText = managerListInput.value;
-            allManagers = managersText.split(/[\n,]/)
-                .map(manager => manager.trim())
-                .filter(manager => manager !== "");
-            
             // Si no hay jugadores ingresados, usar los predeterminados
             if (allPlayers.length === 0) {
                 allPlayers = [
@@ -557,14 +486,8 @@
                 ];
             }
             
-            // Si no hay managers ingresados, usar predeterminados
-            if (allManagers.length === 0) {
-                allManagers = ["Manager A", "Manager B", "Manager C"];
-            }
-            
-            // Inicializar listas
+            // Inicializar listas de jugadores
             availablePlayers = [...allPlayers];
-            availableManagers = [...allManagers];
             
             // Inicializar jugadores de los equipos
             positions.forEach(pos => {
@@ -578,8 +501,10 @@
             team1.manager = null;
             team2.manager = null;
             
-            // Actualizar tablas de equipos
-            updateTeamTables();
+            // Crear posiciones en los equipos
+            createTeamPositions();
+            
+            // Actualizar managers
             updateManagersDisplay();
             
             // Actualizar lista de jugadores disponibles
@@ -593,16 +518,42 @@
             draftScreen.classList.remove('hidden');
         }
 
-        // Actualizar las tablas de los equipos
-        function updateTeamTables() {
+        // Crear posiciones en los equipos
+        function createTeamPositions() {
+            const team1Positions = document.getElementById('team1-positions');
+            const team2Positions = document.getElementById('team2-positions');
+            
+            team1Positions.innerHTML = '';
+            team2Positions.innerHTML = '';
+            
             positions.forEach(pos => {
-                if (pos.id !== 'extra') {
-                    updatePositionCell(1, pos.id);
-                    updatePositionCell(2, pos.id);
-                } else {
-                    updateExtrasCell(1);
-                    updateExtrasCell(2);
-                }
+                // Equipo 1
+                const team1Row = document.createElement('div');
+                team1Row.className = 'position-row';
+                team1Row.innerHTML = `
+                    <div class="position-info">
+                        <div class="position-name">${pos.name}</div>
+                        <div class="position-player" id="team1-${pos.id}">(Vacante)</div>
+                    </div>
+                    <div class="position-actions" id="team1-${pos.id}-actions">
+                        <button class="btn btn-select" onclick="startSelectPlayer('${pos.id}', 1)">Seleccionar</button>
+                    </div>
+                `;
+                team1Positions.appendChild(team1Row);
+                
+                // Equipo 2
+                const team2Row = document.createElement('div');
+                team2Row.className = 'position-row';
+                team2Row.innerHTML = `
+                    <div class="position-info">
+                        <div class="position-name">${pos.name}</div>
+                        <div class="position-player" id="team2-${pos.id}">(Vacante)</div>
+                    </div>
+                    <div class="position-actions" id="team2-${pos.id}-actions">
+                        <button class="btn btn-select" onclick="startSelectPlayer('${pos.id}', 2)">Seleccionar</button>
+                    </div>
+                `;
+                team2Positions.appendChild(team2Row);
             });
         }
 
@@ -630,57 +581,44 @@
             }
         }
 
-        // Actualizar una celda de posición
-        function updatePositionCell(team, positionId) {
-            const cell = document.getElementById(`team${team}-${positionId}`);
+        // Actualizar una posición
+        function updatePosition(team, positionId) {
+            const playerCell = document.getElementById(`team${team}-${positionId}`);
             const actionsCell = document.getElementById(`team${team}-${positionId}-actions`);
-            
             const teamObj = team === 1 ? team1 : team2;
-            const player = teamObj.players[positionId];
+            const player = positionId !== 'extra' ? teamObj.players[positionId] : null;
+            const extras = positionId === 'extra' ? teamObj.extras : null;
             
-            if (player) {
-                cell.textContent = player;
-                cell.classList.add('position-filled');
-                
-                // Botones para posiciones ocupadas
-                actionsCell.innerHTML = `
-                    <button class="btn btn-replace" onclick="startReplacePlayer('${positionId}', ${team})">Reemplazar</button>
-                    <button class="btn btn-remove" onclick="removePlayer('${positionId}', ${team})">Eliminar</button>
-                `;
+            if (positionId !== 'extra') {
+                if (player) {
+                    playerCell.textContent = player;
+                    playerCell.parentElement.parentElement.classList.add('position-filled');
+                    actionsCell.innerHTML = `
+                        <button class="btn btn-replace" onclick="startReplacePlayer('${positionId}', ${team})">Reemplazar</button>
+                        <button class="btn btn-remove" onclick="removePlayer('${positionId}', ${team})">Eliminar</button>
+                    `;
+                } else {
+                    playerCell.textContent = "(Vacante)";
+                    playerCell.parentElement.parentElement.classList.remove('position-filled');
+                    actionsCell.innerHTML = `
+                        <button class="btn btn-select" onclick="startSelectPlayer('${positionId}', ${team})">Seleccionar</button>
+                    `;
+                }
             } else {
-                cell.textContent = "(Vacante)";
-                cell.classList.remove('position-filled');
-                
-                // Botón para posiciones vacantes
-                actionsCell.innerHTML = `
-                    <button class="btn btn-select" onclick="startSelectPlayer('${positionId}', ${team})">Seleccionar</button>
-                `;
-            }
-        }
-
-        // Actualizar celda de extras
-        function updateExtrasCell(team) {
-            const cell = document.getElementById(`team${team}-extra`);
-            const actionsCell = document.getElementById(`team${team}-extra-actions`);
-            const teamObj = team === 1 ? team1 : team2;
-            
-            if (teamObj.extras.length > 0) {
-                cell.textContent = teamObj.extras.join(", ");
-                cell.classList.add('position-filled');
-                
-                // Botones para extras
-                actionsCell.innerHTML = `
-                    <button class="btn btn-select" onclick="startAddExtra(${team})">Agregar</button>
-                    <button class="btn btn-remove" onclick="clearExtras(${team})">Limpiar</button>
-                `;
-            } else {
-                cell.textContent = "(Vacante)";
-                cell.classList.remove('position-filled');
-                
-                // Botón para extras vacíos
-                actionsCell.innerHTML = `
-                    <button class="btn btn-select" onclick="startAddExtra(${team})">Agregar</button>
-                `;
+                if (extras.length > 0) {
+                    playerCell.textContent = extras.join(", ");
+                    playerCell.parentElement.parentElement.classList.add('position-filled');
+                    actionsCell.innerHTML = `
+                        <button class="btn btn-select" onclick="startAddExtra(${team})">Agregar</button>
+                        <button class="btn btn-remove" onclick="clearExtras(${team})">Limpiar</button>
+                    `;
+                } else {
+                    playerCell.textContent = "(Vacante)";
+                    playerCell.parentElement.parentElement.classList.remove('position-filled');
+                    actionsCell.innerHTML = `
+                        <button class="btn btn-select" onclick="startAddExtra(${team})">Agregar</button>
+                    `;
+                }
             }
         }
 
@@ -688,39 +626,67 @@
         function startSelectManager(team) {
             selectingManager = true;
             currentTeamForSelection = team;
-            showManagerSelection();
+            showSelectionModal("Seleccionar Manager", availablePlayers);
         }
 
-        // Mostrar selección de managers
-        function showManagerSelection() {
-            selectionTitle.textContent = "Seleccionar Manager";
+        // Mostrar modal de selección
+        function showSelectionModal(title, items) {
+            modalTitle.textContent = title;
+            modalContent.innerHTML = '';
             
-            // Limpiar selección previa
-            selectionContainer.innerHTML = '';
-            
-            if (availableManagers.length === 0) {
+            if (items.length === 0) {
                 const message = document.createElement('p');
-                message.textContent = "No hay managers disponibles";
-                selectionContainer.appendChild(message);
+                message.textContent = "No hay opciones disponibles";
+                modalContent.appendChild(message);
             } else {
-                const managerList = document.createElement('ul');
-                managerList.className = 'player-list';
+                const list = document.createElement('ul');
+                list.style.padding = '0';
+                list.style.listStyle = 'none';
                 
-                availableManagers.forEach(manager => {
+                items.forEach(item => {
                     const li = document.createElement('li');
-                    li.textContent = manager;
+                    li.style.padding = '8px';
+                    li.style.marginBottom = '5px';
+                    li.style.backgroundColor = '#e9ecef';
+                    li.style.borderRadius = '4px';
+                    li.style.display = 'flex';
+                    li.style.justifyContent = 'space-between';
+                    li.style.alignItems = 'center';
+                    
+                    const nameSpan = document.createElement('span');
+                    nameSpan.textContent = item;
+                    nameSpan.style.flex = '1';
+                    nameSpan.style.whiteSpace = 'nowrap';
+                    nameSpan.style.overflow = 'hidden';
+                    nameSpan.style.textOverflow = 'ellipsis';
                     
                     const selectBtn = document.createElement('button');
                     selectBtn.className = 'btn btn-select';
-                    selectBtn.textContent = 'Seleccionar';
-                    selectBtn.onclick = () => assignManager(manager);
+                    selectBtn.textContent = selectingManager ? 'Asignar' : 'Seleccionar';
+                    selectBtn.onclick = () => {
+                        if (selectingManager) {
+                            assignManager(item);
+                        } else {
+                            assignPlayerToPosition(item);
+                        }
+                        closeModal();
+                    };
                     
+                    li.appendChild(nameSpan);
                     li.appendChild(selectBtn);
-                    managerList.appendChild(li);
+                    list.appendChild(li);
                 });
                 
-                selectionContainer.appendChild(managerList);
+                modalContent.appendChild(list);
             }
+            
+            selectionModal.classList.remove('hidden');
+        }
+
+        // Cerrar modal
+        function closeModal() {
+            selectionModal.classList.add('hidden');
+            selectingManager = false;
         }
 
         // Asignar manager a un equipo
@@ -730,26 +696,21 @@
             
             // Si ya tenía manager, lo liberamos
             if (teamObj.manager) {
-                availableManagers.push(teamObj.manager);
+                availablePlayers.push(teamObj.manager);
             }
             
             // Asignar nuevo manager
             teamObj.manager = manager;
             
             // Eliminar manager de la lista de disponibles
-            const index = availableManagers.indexOf(manager);
+            const index = availablePlayers.indexOf(manager);
             if (index !== -1) {
-                availableManagers.splice(index, 1);
+                availablePlayers.splice(index, 1);
             }
-            
-            // Resetear selección
-            selectingManager = false;
-            currentTeamForSelection = null;
             
             // Actualizar UI
             updateManagersDisplay();
             updateAvailablePlayers();
-            selectionTitle.textContent = "Jugadores Disponibles";
         }
 
         // Eliminar manager de un equipo
@@ -757,17 +718,18 @@
             const teamObj = team === 1 ? team1 : team2;
             
             if (teamObj.manager) {
-                availableManagers.push(teamObj.manager);
+                availablePlayers.push(teamObj.manager);
                 teamObj.manager = null;
                 
                 // Actualizar UI
                 updateManagersDisplay();
+                updateAvailablePlayers();
             }
         }
 
         // Iniciar selección de jugador para una posición
         function startSelectPlayer(positionId, team) {
-            if (currentPickingTeam !== team) {
+            if (currentPickingTeam !== team && positionId !== 'extra') {
                 alert(`No es el turno de ${team === 1 ? team1.name : team2.name}. Es el turno de ${currentPickingTeam === 1 ? team1.name : team2.name}.`);
                 return;
             }
@@ -775,7 +737,7 @@
             selectingManager = false;
             currentPosition = positionId;
             currentTeamForSelection = team;
-            showPlayerSelection();
+            showSelectionModal(`Seleccionar para ${positions.find(p => p.id === positionId).name}`, availablePlayers);
         }
 
         // Iniciar reemplazo de jugador
@@ -783,7 +745,7 @@
             currentPosition = positionId;
             currentTeamForSelection = team;
             selectingManager = false;
-            showPlayerSelection();
+            showSelectionModal(`Reemplazar en ${positions.find(p => p.id === positionId).name}`, availablePlayers);
         }
 
         // Iniciar adición de extra
@@ -791,56 +753,7 @@
             currentPosition = 'extra';
             currentTeamForSelection = team;
             selectingManager = false;
-            showPlayerSelection();
-        }
-
-        // Mostrar selección de jugadores
-        function showPlayerSelection() {
-            selectionTitle.textContent = "Jugadores Disponibles";
-            
-            // Limpiar selección previa
-            selectionContainer.innerHTML = '';
-            
-            const addPlayersBtn = document.createElement('button');
-            addPlayersBtn.className = 'controls button add-players-btn';
-            addPlayersBtn.textContent = 'Agregar más jugadores';
-            addPlayersBtn.onclick = showAddPlayers;
-            selectionContainer.appendChild(addPlayersBtn);
-            
-            const addPlayersSection = document.createElement('div');
-            addPlayersSection.id = 'addPlayersSection';
-            addPlayersSection.className = 'hidden';
-            addPlayersSection.innerHTML = `
-                <div class="player-input-container">
-                    <input type="text" id="newPlayerName" placeholder="Nombre del jugador">
-                    <button onclick="addNewPlayer()">Agregar</button>
-                </div>
-            `;
-            selectionContainer.appendChild(addPlayersSection);
-            
-            const playerList = document.createElement('ul');
-            playerList.className = 'player-list';
-            
-            if (availablePlayers.length === 0) {
-                const li = document.createElement('li');
-                li.textContent = "No hay jugadores disponibles";
-                playerList.appendChild(li);
-            } else {
-                availablePlayers.forEach(player => {
-                    const li = document.createElement('li');
-                    li.textContent = player;
-                    
-                    const selectBtn = document.createElement('button');
-                    selectBtn.className = 'btn btn-select';
-                    selectBtn.textContent = 'Seleccionar';
-                    selectBtn.onclick = () => assignPlayerToPosition(player);
-                    
-                    li.appendChild(selectBtn);
-                    playerList.appendChild(li);
-                });
-            }
-            
-            selectionContainer.appendChild(playerList);
+            showSelectionModal("Agregar DH/Extra", availablePlayers);
         }
 
         // Asignar jugador a una posición
@@ -852,7 +765,7 @@
             
             // Verificar que el jugador no esté ya en el equipo (excepto para extras)
             if (currentPosition !== 'extra') {
-                if (Object.values(teamObj.players).includes(player) || teamObj.extras.includes(player)) {
+                if (Object.values(teamObj.players).includes(player) || teamObj.extras.includes(player) || teamObj.manager === player) {
                     alert("Este jugador ya está en el equipo.");
                     return;
                 }
@@ -871,17 +784,18 @@
                     availablePlayers.splice(index, 1);
                 }
                 
-                // Cambiar turno
-                currentPickingTeam = currentPickingTeam === 1 ? 2 : 1;
+                // Cambiar turno (excepto para extras)
+                if (currentPosition !== 'extra') {
+                    currentPickingTeam = currentPickingTeam === 1 ? 2 : 1;
+                }
             } else {
                 // Para extras
-                if (teamObj.extras.includes(player)) {
-                    alert("Este jugador ya está en los extras.");
+                if (teamObj.extras.includes(player) || teamObj.manager === player || Object.values(teamObj.players).includes(player)) {
+                    alert("Este jugador ya está en el equipo.");
                     return;
                 }
                 
                 teamObj.extras.push(player);
-                // No cambia el turno para extras
             }
             
             // Resetear selección
@@ -889,7 +803,7 @@
             currentTeamForSelection = null;
             
             // Actualizar UI
-            updateTeamTables();
+            updatePosition(team, currentPosition || 'extra');
             updateAvailablePlayers();
             updateTurnInfo();
         }
@@ -903,7 +817,7 @@
                 teamObj.players[positionId] = null;
                 
                 // Actualizar UI
-                updateTeamTables();
+                updatePosition(team, positionId);
                 updateAvailablePlayers();
             }
         }
@@ -917,35 +831,35 @@
                 teamObj.extras = [];
                 
                 // Actualizar UI
-                updateTeamTables();
+                updatePosition(team, 'extra');
                 updateAvailablePlayers();
             }
         }
 
         // Actualizar lista de jugadores disponibles
         function updateAvailablePlayers() {
-            if (selectingManager) return;
+            availablePlayersUl.innerHTML = '';
             
-            const playerListContainer = document.querySelector('#selectionContainer ul');
-            if (!playerListContainer) return;
-            
-            playerListContainer.innerHTML = '';
             if (availablePlayers.length === 0) {
                 const li = document.createElement('li');
+                li.className = 'player-item';
                 li.textContent = "No hay jugadores disponibles";
-                playerListContainer.appendChild(li);
+                availablePlayersUl.appendChild(li);
             } else {
                 availablePlayers.forEach(player => {
                     const li = document.createElement('li');
-                    li.textContent = player;
+                    li.className = 'player-item';
                     
-                    const selectBtn = document.createElement('button');
-                    selectBtn.className = 'btn btn-select';
-                    selectBtn.textContent = 'Seleccionar';
-                    selectBtn.onclick = () => assignPlayerToPosition(player);
+                    const nameSpan = document.createElement('span');
+                    nameSpan.className = 'player-name';
+                    nameSpan.textContent = player;
                     
-                    li.appendChild(selectBtn);
-                    playerListContainer.appendChild(li);
+                    const actionsDiv = document.createElement('div');
+                    actionsDiv.className = 'player-actions';
+                    
+                    li.appendChild(nameSpan);
+                    li.appendChild(actionsDiv);
+                    availablePlayersUl.appendChild(li);
                 });
             }
         }
@@ -1001,12 +915,12 @@
             let yOffset = 20;
             const lineHeight = 10;
 
-            doc.setFontSize(20);
+            doc.setFontSize(16);
             doc.text("Resultados del Draft de Softball", 105, yOffset, null, null, "center");
-            yOffset += 20;
+            yOffset += 15;
 
             // Equipo 1
-            doc.setFontSize(16);
+            doc.setFontSize(14);
             doc.text(`${team1.name}:`, 20, yOffset);
             yOffset += lineHeight;
             
@@ -1039,7 +953,7 @@
             yOffset += 10;
 
             // Equipo 2
-            doc.setFontSize(16);
+            doc.setFontSize(14);
             doc.text(`${team2.name}:`, 20, yOffset);
             yOffset += lineHeight;
             
@@ -1083,9 +997,6 @@
             if (e.key === 'Enter') initializeDraft();
         });
         playerListInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') initializeDraft();
-        });
-        managerListInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') initializeDraft();
         });
     </script>
