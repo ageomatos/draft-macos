@@ -408,6 +408,15 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
+        // Verificar que jsPDF esté cargado
+        if (!window.jspdf) {
+            console.error("jsPDF no se cargó correctamente");
+            // Deshabilitar el botón de descarga PDF
+            document.querySelector('.download-btn').disabled = true;
+            document.querySelector('.download-btn').style.opacity = '0.5';
+            document.querySelector('.download-btn').title = 'Funcionalidad no disponible (jsPDF no cargado)';
+        }
+
         // Variables globales
         let allPlayers = [];
         let availablePlayers = [];
@@ -685,8 +694,14 @@
 
         // Cerrar modal
         function closeModal() {
-            selectionModal.classList.add('hidden');
-            selectingManager = false;
+            try {
+                selectionModal.classList.add('hidden');
+                selectingManager = false;
+                currentPosition = null;
+                currentTeamForSelection = null;
+            } catch (error) {
+                console.error("Error al cerrar el modal:", error);
+            }
         }
 
         // Asignar manager a un equipo
@@ -909,81 +924,91 @@
 
         // Descargar PDF con las selecciones
         function downloadPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-
-            let yOffset = 20;
-            const lineHeight = 10;
-
-            doc.setFontSize(16);
-            doc.text("Resultados del Draft de Softball", 105, yOffset, null, null, "center");
-            yOffset += 15;
-
-            // Equipo 1
-            doc.setFontSize(14);
-            doc.text(`${team1.name}:`, 20, yOffset);
-            yOffset += lineHeight;
-            
-            doc.setFontSize(12);
-            doc.text(`Manager: ${team1.manager || "No asignado"}`, 25, yOffset);
-            yOffset += lineHeight;
-            
-            let hasPlayers1 = false;
-            positions.forEach(pos => {
-                if (pos.id !== 'extra') {
-                    if (team1.players[pos.id]) {
-                        doc.text(`- ${pos.name}: ${team1.players[pos.id]}`, 25, yOffset);
-                        yOffset += lineHeight;
-                        hasPlayers1 = true;
-                    }
-                } else {
-                    if (team1.extras.length > 0) {
-                        doc.text(`- ${pos.name}: ${team1.extras.join(", ")}`, 25, yOffset);
-                        yOffset += lineHeight;
-                        hasPlayers1 = true;
-                    }
+            try {
+                if (!window.jspdf) {
+                    alert("No se puede generar el PDF. La biblioteca jsPDF no se cargó correctamente.");
+                    return;
                 }
-            });
-            
-            if (!hasPlayers1) {
-                doc.text("No hay jugadores seleccionados.", 25, yOffset);
-                yOffset += lineHeight;
-            }
-            
-            yOffset += 10;
 
-            // Equipo 2
-            doc.setFontSize(14);
-            doc.text(`${team2.name}:`, 20, yOffset);
-            yOffset += lineHeight;
-            
-            doc.setFontSize(12);
-            doc.text(`Manager: ${team2.manager || "No asignado"}`, 25, yOffset);
-            yOffset += lineHeight;
-            
-            let hasPlayers2 = false;
-            positions.forEach(pos => {
-                if (pos.id !== 'extra') {
-                    if (team2.players[pos.id]) {
-                        doc.text(`- ${pos.name}: ${team2.players[pos.id]}`, 25, yOffset);
-                        yOffset += lineHeight;
-                        hasPlayers2 = true;
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                let yOffset = 20;
+                const lineHeight = 10;
+
+                doc.setFontSize(16);
+                doc.text("Resultados del Draft de Softball", 105, yOffset, null, null, "center");
+                yOffset += 15;
+
+                // Equipo 1
+                doc.setFontSize(14);
+                doc.text(`${team1.name}:`, 20, yOffset);
+                yOffset += lineHeight;
+                
+                doc.setFontSize(12);
+                doc.text(`Manager: ${team1.manager || "No asignado"}`, 25, yOffset);
+                yOffset += lineHeight;
+                
+                let hasPlayers1 = false;
+                positions.forEach(pos => {
+                    if (pos.id !== 'extra') {
+                        if (team1.players[pos.id]) {
+                            doc.text(`- ${pos.name}: ${team1.players[pos.id]}`, 25, yOffset);
+                            yOffset += lineHeight;
+                            hasPlayers1 = true;
+                        }
+                    } else {
+                        if (team1.extras.length > 0) {
+                            doc.text(`- ${pos.name}: ${team1.extras.join(", ")}`, 25, yOffset);
+                            yOffset += lineHeight;
+                            hasPlayers1 = true;
+                        }
                     }
-                } else {
-                    if (team2.extras.length > 0) {
-                        doc.text(`- ${pos.name}: ${team2.extras.join(", ")}`, 25, yOffset);
-                        yOffset += lineHeight;
-                        hasPlayers2 = true;
-                    }
+                });
+                
+                if (!hasPlayers1) {
+                    doc.text("No hay jugadores seleccionados.", 25, yOffset);
+                    yOffset += lineHeight;
                 }
-            });
-            
-            if (!hasPlayers2) {
-                doc.text("No hay jugadores seleccionados.", 25, yOffset);
-                yOffset += lineHeight;
-            }
+                
+                yOffset += 10;
 
-            doc.save(`Draft_Softball_${team1.name}_vs_${team2.name}.pdf`);
+                // Equipo 2
+                doc.setFontSize(14);
+                doc.text(`${team2.name}:`, 20, yOffset);
+                yOffset += lineHeight;
+                
+                doc.setFontSize(12);
+                doc.text(`Manager: ${team2.manager || "No asignado"}`, 25, yOffset);
+                yOffset += lineHeight;
+                
+                let hasPlayers2 = false;
+                positions.forEach(pos => {
+                    if (pos.id !== 'extra') {
+                        if (team2.players[pos.id]) {
+                            doc.text(`- ${pos.name}: ${team2.players[pos.id]}`, 25, yOffset);
+                            yOffset += lineHeight;
+                            hasPlayers2 = true;
+                        }
+                    } else {
+                        if (team2.extras.length > 0) {
+                            doc.text(`- ${pos.name}: ${team2.extras.join(", ")}`, 25, yOffset);
+                            yOffset += lineHeight;
+                            hasPlayers2 = true;
+                        }
+                    }
+                });
+                
+                if (!hasPlayers2) {
+                    doc.text("No hay jugadores seleccionados.", 25, yOffset);
+                    yOffset += lineHeight;
+                }
+
+                doc.save(`Draft_Softball_${team1.name}_vs_${team2.name}.pdf`);
+            } catch (error) {
+                console.error("Error al generar PDF:", error);
+                alert("Ocurrió un error al generar el PDF. Por favor inténtalo de nuevo.");
+            }
         }
 
         // Event listeners
