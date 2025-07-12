@@ -238,6 +238,22 @@
             display: flex;
             gap: 5px;
         }
+        .manager-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .manager-name {
+            font-weight: bold;
+        }
+        .manager-actions {
+            display: flex;
+            gap: 5px;
+        }
     </style>
 </head>
 <body>
@@ -257,6 +273,10 @@
                 <label for="playerList">Lista de Jugadores (uno por línea o separados por comas):</label>
                 <textarea id="playerList" placeholder="Ej: Juan Pérez&#10;Carlos Gómez&#10;María Rodríguez&#10;Luis Hernández&#10;Ana Torres&#10;Pedro Díaz&#10;Laura Soto&#10;Miguel Reyes&#10;Sofía Vargas&#10;Roberto Cruz&#10;Elena Ramos&#10;Andrés Castro&#10;Gabriela Gil&#10;Fernando Vega&#10;Isabel Núñez&#10;Diego Molina&#10;Valeria Pineda&#10;José Ortiz&#10;Camila Blanco&#10;Ricardo Marín" required></textarea>
             </div>
+            <div class="form-group">
+                <label for="managerList">Lista de Managers (uno por línea o separados por comas):</label>
+                <textarea id="managerList" placeholder="Ej: Manager A&#10;Manager B&#10;Manager C" required></textarea>
+            </div>
         </div>
         <button id="startDraftBtn" class="start-draft-btn">Comenzar Draft</button>
     </div>
@@ -270,6 +290,18 @@
             <!-- Equipo 1 -->
             <div class="team-panel team1">
                 <h2 id="team1Title">Equipo 1</h2>
+                
+                <div class="manager-section">
+                    <div>
+                        <span>Manager: </span>
+                        <span class="manager-name" id="team1-manager">(Sin asignar)</span>
+                    </div>
+                    <div class="manager-actions">
+                        <button class="btn btn-select" onclick="startSelectManager(1)">Asignar</button>
+                        <button class="btn btn-remove" onclick="removeManager(1)" id="team1-remove-manager" style="display: none;">Eliminar</button>
+                    </div>
+                </div>
+                
                 <table id="team1Table">
                     <thead>
                         <tr>
@@ -335,22 +367,36 @@
 
             <!-- Jugadores disponibles en el centro -->
             <div class="player-pool">
-                <h2>Jugadores Disponibles</h2>
-                <button id="addPlayersBtn" class="controls button add-players-btn" onclick="showAddPlayers()">Agregar más jugadores</button>
-                <div id="addPlayersSection" class="hidden">
-                    <div class="player-input-container">
-                        <input type="text" id="newPlayerName" placeholder="Nombre del jugador">
-                        <button onclick="addNewPlayer()">Agregar</button>
+                <h2 id="selectionTitle">Jugadores Disponibles</h2>
+                <div id="selectionContainer">
+                    <button id="addPlayersBtn" class="controls button add-players-btn" onclick="showAddPlayers()">Agregar más jugadores</button>
+                    <div id="addPlayersSection" class="hidden">
+                        <div class="player-input-container">
+                            <input type="text" id="newPlayerName" placeholder="Nombre del jugador">
+                            <button onclick="addNewPlayer()">Agregar</button>
+                        </div>
                     </div>
+                    <ul id="availablePlayers" class="player-list">
+                        <!-- Jugadores se cargarán aquí -->
+                    </ul>
                 </div>
-                <ul id="availablePlayers" class="player-list">
-                    <!-- Jugadores se cargarán aquí -->
-                </ul>
             </div>
 
             <!-- Equipo 2 -->
             <div class="team-panel team2">
                 <h2 id="team2Title">Equipo 2</h2>
+                
+                <div class="manager-section">
+                    <div>
+                        <span>Manager: </span>
+                        <span class="manager-name" id="team2-manager">(Sin asignar)</span>
+                    </div>
+                    <div class="manager-actions">
+                        <button class="btn btn-select" onclick="startSelectManager(2)">Asignar</button>
+                        <button class="btn btn-remove" onclick="removeManager(2)" id="team2-remove-manager" style="display: none;">Eliminar</button>
+                    </div>
+                </div>
+                
                 <table id="team2Table">
                     <thead>
                         <tr>
@@ -426,19 +472,24 @@
         // Variables globales
         let allPlayers = [];
         let availablePlayers = [];
+        let allManagers = [];
+        let availableManagers = [];
         let team1 = {
             name: "Equipo 1",
+            manager: null,
             players: {},
             extras: []
         };
         let team2 = {
             name: "Equipo 2",
+            manager: null,
             players: {},
             extras: []
         };
         let currentPickingTeam = 1;
         let currentPosition = null;
         let currentTeamForSelection = null;
+        let selectingManager = false;
 
         // Posiciones de softball
         const positions = [
@@ -460,6 +511,7 @@
         const team1NameInput = document.getElementById('team1Name');
         const team2NameInput = document.getElementById('team2Name');
         const playerListInput = document.getElementById('playerList');
+        const managerListInput = document.getElementById('managerList');
         const startDraftBtn = document.getElementById('startDraftBtn');
         const currentPickInfo = document.getElementById('currentPickInfo');
         const currentTeamNameSpan = document.getElementById('currentTeamName');
@@ -469,6 +521,8 @@
         const addPlayersBtn = document.getElementById('addPlayersBtn');
         const addPlayersSection = document.getElementById('addPlayersSection');
         const newPlayerNameInput = document.getElementById('newPlayerName');
+        const selectionTitle = document.getElementById('selectionTitle');
+        const selectionContainer = document.getElementById('selectionContainer');
 
         // Inicializar el draft
         function initializeDraft() {
@@ -482,10 +536,15 @@
             
             // Obtener lista de jugadores
             const playersText = playerListInput.value;
-            // Dividir por líneas o comas
             allPlayers = playersText.split(/[\n,]/)
                 .map(player => player.trim())
                 .filter(player => player !== "");
+            
+            // Obtener lista de managers
+            const managersText = managerListInput.value;
+            allManagers = managersText.split(/[\n,]/)
+                .map(manager => manager.trim())
+                .filter(manager => manager !== "");
             
             // Si no hay jugadores ingresados, usar los predeterminados
             if (allPlayers.length === 0) {
@@ -498,8 +557,14 @@
                 ];
             }
             
-            // Inicializar listas de jugadores
+            // Si no hay managers ingresados, usar predeterminados
+            if (allManagers.length === 0) {
+                allManagers = ["Manager A", "Manager B", "Manager C"];
+            }
+            
+            // Inicializar listas
             availablePlayers = [...allPlayers];
+            availableManagers = [...allManagers];
             
             // Inicializar jugadores de los equipos
             positions.forEach(pos => {
@@ -510,9 +575,12 @@
             });
             team1.extras = [];
             team2.extras = [];
+            team1.manager = null;
+            team2.manager = null;
             
             // Actualizar tablas de equipos
             updateTeamTables();
+            updateManagersDisplay();
             
             // Actualizar lista de jugadores disponibles
             updateAvailablePlayers();
@@ -536,6 +604,30 @@
                     updateExtrasCell(2);
                 }
             });
+        }
+
+        // Actualizar visualización de managers
+        function updateManagersDisplay() {
+            const team1Manager = document.getElementById('team1-manager');
+            const team2Manager = document.getElementById('team2-manager');
+            const team1RemoveBtn = document.getElementById('team1-remove-manager');
+            const team2RemoveBtn = document.getElementById('team2-remove-manager');
+            
+            if (team1.manager) {
+                team1Manager.textContent = team1.manager;
+                team1RemoveBtn.style.display = 'inline-block';
+            } else {
+                team1Manager.textContent = "(Sin asignar)";
+                team1RemoveBtn.style.display = 'none';
+            }
+            
+            if (team2.manager) {
+                team2Manager.textContent = team2.manager;
+                team2RemoveBtn.style.display = 'inline-block';
+            } else {
+                team2Manager.textContent = "(Sin asignar)";
+                team2RemoveBtn.style.display = 'none';
+            }
         }
 
         // Actualizar una celda de posición
@@ -592,6 +684,87 @@
             }
         }
 
+        // Iniciar selección de manager
+        function startSelectManager(team) {
+            selectingManager = true;
+            currentTeamForSelection = team;
+            showManagerSelection();
+        }
+
+        // Mostrar selección de managers
+        function showManagerSelection() {
+            selectionTitle.textContent = "Seleccionar Manager";
+            
+            // Limpiar selección previa
+            selectionContainer.innerHTML = '';
+            
+            if (availableManagers.length === 0) {
+                const message = document.createElement('p');
+                message.textContent = "No hay managers disponibles";
+                selectionContainer.appendChild(message);
+            } else {
+                const managerList = document.createElement('ul');
+                managerList.className = 'player-list';
+                
+                availableManagers.forEach(manager => {
+                    const li = document.createElement('li');
+                    li.textContent = manager;
+                    
+                    const selectBtn = document.createElement('button');
+                    selectBtn.className = 'btn btn-select';
+                    selectBtn.textContent = 'Seleccionar';
+                    selectBtn.onclick = () => assignManager(manager);
+                    
+                    li.appendChild(selectBtn);
+                    managerList.appendChild(li);
+                });
+                
+                selectionContainer.appendChild(managerList);
+            }
+        }
+
+        // Asignar manager a un equipo
+        function assignManager(manager) {
+            const team = currentTeamForSelection;
+            const teamObj = team === 1 ? team1 : team2;
+            
+            // Si ya tenía manager, lo liberamos
+            if (teamObj.manager) {
+                availableManagers.push(teamObj.manager);
+            }
+            
+            // Asignar nuevo manager
+            teamObj.manager = manager;
+            
+            // Eliminar manager de la lista de disponibles
+            const index = availableManagers.indexOf(manager);
+            if (index !== -1) {
+                availableManagers.splice(index, 1);
+            }
+            
+            // Resetear selección
+            selectingManager = false;
+            currentTeamForSelection = null;
+            
+            // Actualizar UI
+            updateManagersDisplay();
+            updateAvailablePlayers();
+            selectionTitle.textContent = "Jugadores Disponibles";
+        }
+
+        // Eliminar manager de un equipo
+        function removeManager(team) {
+            const teamObj = team === 1 ? team1 : team2;
+            
+            if (teamObj.manager) {
+                availableManagers.push(teamObj.manager);
+                teamObj.manager = null;
+                
+                // Actualizar UI
+                updateManagersDisplay();
+            }
+        }
+
         // Iniciar selección de jugador para una posición
         function startSelectPlayer(positionId, team) {
             if (currentPickingTeam !== team) {
@@ -599,6 +772,7 @@
                 return;
             }
             
+            selectingManager = false;
             currentPosition = positionId;
             currentTeamForSelection = team;
             showPlayerSelection();
@@ -608,6 +782,7 @@
         function startReplacePlayer(positionId, team) {
             currentPosition = positionId;
             currentTeamForSelection = team;
+            selectingManager = false;
             showPlayerSelection();
         }
 
@@ -615,22 +790,41 @@
         function startAddExtra(team) {
             currentPosition = 'extra';
             currentTeamForSelection = team;
+            selectingManager = false;
             showPlayerSelection();
         }
 
         // Mostrar selección de jugadores
         function showPlayerSelection() {
-            // Limpiar selección previa
-            const prevSelected = document.querySelectorAll('.player-list li.selected');
-            prevSelected.forEach(item => item.classList.remove('selected'));
+            selectionTitle.textContent = "Jugadores Disponibles";
             
-            // Mostrar todos los jugadores disponibles
-            availablePlayersUl.innerHTML = '';
+            // Limpiar selección previa
+            selectionContainer.innerHTML = '';
+            
+            const addPlayersBtn = document.createElement('button');
+            addPlayersBtn.className = 'controls button add-players-btn';
+            addPlayersBtn.textContent = 'Agregar más jugadores';
+            addPlayersBtn.onclick = showAddPlayers;
+            selectionContainer.appendChild(addPlayersBtn);
+            
+            const addPlayersSection = document.createElement('div');
+            addPlayersSection.id = 'addPlayersSection';
+            addPlayersSection.className = 'hidden';
+            addPlayersSection.innerHTML = `
+                <div class="player-input-container">
+                    <input type="text" id="newPlayerName" placeholder="Nombre del jugador">
+                    <button onclick="addNewPlayer()">Agregar</button>
+                </div>
+            `;
+            selectionContainer.appendChild(addPlayersSection);
+            
+            const playerList = document.createElement('ul');
+            playerList.className = 'player-list';
             
             if (availablePlayers.length === 0) {
                 const li = document.createElement('li');
                 li.textContent = "No hay jugadores disponibles";
-                availablePlayersUl.appendChild(li);
+                playerList.appendChild(li);
             } else {
                 availablePlayers.forEach(player => {
                     const li = document.createElement('li');
@@ -642,9 +836,11 @@
                     selectBtn.onclick = () => assignPlayerToPosition(player);
                     
                     li.appendChild(selectBtn);
-                    availablePlayersUl.appendChild(li);
+                    playerList.appendChild(li);
                 });
             }
+            
+            selectionContainer.appendChild(playerList);
         }
 
         // Asignar jugador a una posición
@@ -728,16 +924,28 @@
 
         // Actualizar lista de jugadores disponibles
         function updateAvailablePlayers() {
-            availablePlayersUl.innerHTML = '';
+            if (selectingManager) return;
+            
+            const playerListContainer = document.querySelector('#selectionContainer ul');
+            if (!playerListContainer) return;
+            
+            playerListContainer.innerHTML = '';
             if (availablePlayers.length === 0) {
                 const li = document.createElement('li');
                 li.textContent = "No hay jugadores disponibles";
-                availablePlayersUl.appendChild(li);
+                playerListContainer.appendChild(li);
             } else {
                 availablePlayers.forEach(player => {
                     const li = document.createElement('li');
                     li.textContent = player;
-                    availablePlayersUl.appendChild(li);
+                    
+                    const selectBtn = document.createElement('button');
+                    selectBtn.className = 'btn btn-select';
+                    selectBtn.textContent = 'Seleccionar';
+                    selectBtn.onclick = () => assignPlayerToPosition(player);
+                    
+                    li.appendChild(selectBtn);
+                    playerListContainer.appendChild(li);
                 });
             }
         }
@@ -752,12 +960,13 @@
 
         // Mostrar sección para agregar jugadores
         function showAddPlayers() {
+            const addPlayersSection = document.getElementById('addPlayersSection');
             addPlayersSection.classList.toggle('hidden');
         }
 
         // Agregar nuevo jugador
         function addNewPlayer() {
-            const playerName = newPlayerNameInput.value.trim();
+            const playerName = document.getElementById('newPlayerName').value.trim();
             if (playerName === "") {
                 alert("Por favor ingresa un nombre válido.");
                 return;
@@ -771,9 +980,9 @@
             allPlayers.push(playerName);
             availablePlayers.push(playerName);
             
-            newPlayerNameInput.value = "";
+            document.getElementById('newPlayerName').value = "";
             updateAvailablePlayers();
-            addPlayersSection.classList.add('hidden');
+            document.getElementById('addPlayersSection').classList.add('hidden');
         }
 
         // Reiniciar el draft
@@ -801,18 +1010,20 @@
             doc.text(`${team1.name}:`, 20, yOffset);
             yOffset += lineHeight;
             
+            doc.setFontSize(12);
+            doc.text(`Manager: ${team1.manager || "No asignado"}`, 25, yOffset);
+            yOffset += lineHeight;
+            
             let hasPlayers1 = false;
             positions.forEach(pos => {
                 if (pos.id !== 'extra') {
                     if (team1.players[pos.id]) {
-                        doc.setFontSize(12);
                         doc.text(`- ${pos.name}: ${team1.players[pos.id]}`, 25, yOffset);
                         yOffset += lineHeight;
                         hasPlayers1 = true;
                     }
                 } else {
                     if (team1.extras.length > 0) {
-                        doc.setFontSize(12);
                         doc.text(`- ${pos.name}: ${team1.extras.join(", ")}`, 25, yOffset);
                         yOffset += lineHeight;
                         hasPlayers1 = true;
@@ -821,7 +1032,6 @@
             });
             
             if (!hasPlayers1) {
-                doc.setFontSize(12);
                 doc.text("No hay jugadores seleccionados.", 25, yOffset);
                 yOffset += lineHeight;
             }
@@ -833,18 +1043,20 @@
             doc.text(`${team2.name}:`, 20, yOffset);
             yOffset += lineHeight;
             
+            doc.setFontSize(12);
+            doc.text(`Manager: ${team2.manager || "No asignado"}`, 25, yOffset);
+            yOffset += lineHeight;
+            
             let hasPlayers2 = false;
             positions.forEach(pos => {
                 if (pos.id !== 'extra') {
                     if (team2.players[pos.id]) {
-                        doc.setFontSize(12);
                         doc.text(`- ${pos.name}: ${team2.players[pos.id]}`, 25, yOffset);
                         yOffset += lineHeight;
                         hasPlayers2 = true;
                     }
                 } else {
                     if (team2.extras.length > 0) {
-                        doc.setFontSize(12);
                         doc.text(`- ${pos.name}: ${team2.extras.join(", ")}`, 25, yOffset);
                         yOffset += lineHeight;
                         hasPlayers2 = true;
@@ -853,7 +1065,6 @@
             });
             
             if (!hasPlayers2) {
-                doc.setFontSize(12);
                 doc.text("No hay jugadores seleccionados.", 25, yOffset);
                 yOffset += lineHeight;
             }
@@ -874,8 +1085,8 @@
         playerListInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') initializeDraft();
         });
-        newPlayerNameInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') addNewPlayer();
+        managerListInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') initializeDraft();
         });
     </script>
 </body>
