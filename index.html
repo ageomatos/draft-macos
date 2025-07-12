@@ -22,11 +22,10 @@
             margin-top: 20px;
             gap: 20px;
         }
-        .team-panel {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            padding: 20px;
+        .team-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             width: 35%;
         }
         .players-center {
@@ -47,22 +46,6 @@
             color: #2c3e50;
             text-align: center;
             margin-bottom: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
         }
         .player-list {
             list-style: none;
@@ -177,12 +160,6 @@
         .hidden {
             display: none;
         }
-        .team1 {
-            background-color: #e7f3ff;
-        }
-        .team2 {
-            background-color: #ffebeb;
-        }
         .add-players-btn {
             background-color: #17a2b8;
             margin-bottom: 15px;
@@ -210,13 +187,70 @@
             cursor: pointer;
         }
         .drop-target {
-            transition: background-color 0.2s ease;
+            transition: all 0.2s ease;
+            cursor: pointer;
         }
         .drop-target.highlight {
+            background-color: #d4edda !important;
+        }
+        .drop-target.filled {
             background-color: #d4edda;
         }
-        .position-cell {
-            min-height: 40px;
+        .field-container {
+            position: relative;
+            width: 350px;
+            height: 350px;
+            background-color: #8bc34a;
+            border-radius: 50%;
+            margin-bottom: 20px;
+            border: 3px solid #5a9216;
+            overflow: hidden;
+        }
+        .field-position {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            border: 2px solid #5a9216;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .field-position:hover {
+            transform: scale(1.05);
+        }
+        .field-position.filled {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .player-name {
+            font-size: 10px;
+            margin-top: 3px;
+            font-weight: normal;
+            word-break: break-word;
+            max-width: 50px;
+        }
+        .team-title {
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .team1-title {
+            background-color: #007bff;
+        }
+        .team2-title {
+            background-color: #dc3545;
         }
     </style>
 </head>
@@ -248,58 +282,15 @@
 
         <div class="draft-container">
             <!-- Equipo 1 -->
-            <div class="team-panel team1">
-                <h2 id="team1Title">Equipo 1</h2>
-                <table id="team1Table">
-                    <thead>
-                        <tr>
-                            <th>Posición</th>
-                            <th>Jugador</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Pitcher</td>
-                            <td id="team1-pitcher" class="position-cell drop-target" data-position="pitcher" data-team="1" ondrop="dropPlayer(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></td>
-                        </tr>
-                        <tr>
-                            <td>Catcher</td>
-                            <td id="team1-catcher" class="position-cell drop-target" data-position="catcher" data-team="1" ondrop="dropPlayer(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></td>
-                        </tr>
-                        <tr>
-                            <td>1ra Base</td>
-                            <td id="team1-firstBase" class="position-cell drop-target" data-position="firstBase" data-team="1" ondrop="dropPlayer(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></td>
-                        </tr>
-                        <tr>
-                            <td>2da Base</td>
-                            <td id="team1-secondBase" class="position-cell drop-target" data-position="secondBase" data-team="1" ondrop="dropPlayer(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></td>
-                        </tr>
-                        <tr>
-                            <td>3ra Base</td>
-                            <td id="team1-thirdBase" class="position-cell drop-target" data-position="thirdBase" data-team="1" ondrop="dropPlayer(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></td>
-                        </tr>
-                        <tr>
-                            <td>Shortstop</td>
-                            <td id="team1-shortstop" class="position-cell drop-target" data-position="shortstop" data-team="1" ondrop="dropPlayer(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></td>
-                        </tr>
-                        <tr>
-                            <td>J. Izquierdo</td>
-                            <td id="team1-leftField" class="position-cell drop-target" data-position="leftField" data-team="1" ondrop="dropPlayer(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></td>
-                        </tr>
-                        <tr>
-                            <td>J. Central</td>
-                            <td id="team1-centerField" class="position-cell drop-target" data-position="centerField" data-team="1" ondrop="dropPlayer(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></td>
-                        </tr>
-                        <tr>
-                            <td>J. Derecho</td>
-                            <td id="team1-rightField" class="position-cell drop-target" data-position="rightField" data-team="1" ondrop="dropPlayer(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></td>
-                        </tr>
-                        <tr>
-                            <td>DH/Extras</td>
-                            <td id="team1-extra" class="position-cell drop-target" data-position="extra" data-team="1" ondrop="dropPlayer(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="team-container">
+                <div class="team-title team1-title" id="team1Title">Equipo 1</div>
+                <div class="field-container" id="team1Field">
+                    <!-- Posiciones se generarán dinámicamente -->
+                </div>
+                <div class="extras-container">
+                    <h3>DH/Extras</h3>
+                    <div id="team1-extras" class="drop-target" ondrop="dropPlayer(event, 'extra', 1)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" style="min-height: 60px; border: 2px dashed #5a9216; border-radius: 5px; padding: 10px;"></div>
+                </div>
             </div>
 
             <!-- Jugadores disponibles en el centro -->
@@ -320,58 +311,15 @@
             </div>
 
             <!-- Equipo 2 -->
-            <div class="team-panel team2">
-                <h2 id="team2Title">Equipo 2</h2>
-                <table id="team2Table">
-                    <thead>
-                        <tr>
-                            <th>Posición</th>
-                            <th>Jugador</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Pitcher</td>
-                            <td id="team2-pitcher" class="position-cell drop-target" data-position="pitcher" data-team="2" ondrop="dropPlayer(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></td>
-                        </tr>
-                        <tr>
-                            <td>Catcher</td>
-                            <td id="team2-catcher" class="position-cell drop-target" data-position="catcher" data-team="2" ondrop="dropPlayer(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></td>
-                        </tr>
-                        <tr>
-                            <td>1ra Base</td>
-                            <td id="team2-firstBase" class="position-cell drop-target" data-position="firstBase" data-team="2" ondrop="dropPlayer(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></td>
-                        </tr>
-                        <tr>
-                            <td>2da Base</td>
-                            <td id="team2-secondBase" class="position-cell drop-target" data-position="secondBase" data-team="2" ondrop="dropPlayer(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></td>
-                        </tr>
-                        <tr>
-                            <td>3ra Base</td>
-                            <td id="team2-thirdBase" class="position-cell drop-target" data-position="thirdBase" data-team="2" ondrop="dropPlayer(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></td>
-                        </tr>
-                        <tr>
-                            <td>Shortstop</td>
-                            <td id="team2-shortstop" class="position-cell drop-target" data-position="shortstop" data-team="2" ondrop="dropPlayer(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></td>
-                        </tr>
-                        <tr>
-                            <td>J. Izquierdo</td>
-                            <td id="team2-leftField" class="position-cell drop-target" data-position="leftField" data-team="2" ondrop="dropPlayer(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></td>
-                        </tr>
-                        <tr>
-                            <td>J. Central</td>
-                            <td id="team2-centerField" class="position-cell drop-target" data-position="centerField" data-team="2" ondrop="dropPlayer(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></td>
-                        </tr>
-                        <tr>
-                            <td>J. Derecho</td>
-                            <td id="team2-rightField" class="position-cell drop-target" data-position="rightField" data-team="2" ondrop="dropPlayer(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></td>
-                        </tr>
-                        <tr>
-                            <td>DH/Extras</td>
-                            <td id="team2-extra" class="position-cell drop-target" data-position="extra" data-team="2" ondrop="dropPlayer(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="team-container">
+                <div class="team-title team2-title" id="team2Title">Equipo 2</div>
+                <div class="field-container" id="team2Field">
+                    <!-- Posiciones se generarán dinámicamente -->
+                </div>
+                <div class="extras-container">
+                    <h3>DH/Extras</h3>
+                    <div id="team2-extras" class="drop-target" ondrop="dropPlayer(event, 'extra', 2)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" style="min-height: 60px; border: 2px dashed #5a9216; border-radius: 5px; padding: 10px;"></div>
+                </div>
             </div>
         </div>
 
@@ -399,18 +347,17 @@
         let currentPickingTeam = 1;
         let draggedPlayer = null;
 
-        // Posiciones de softball
+        // Posiciones de softball con coordenadas en el campo
         const positions = [
-            { id: "pitcher", name: "Pitcher" },
-            { id: "catcher", name: "Catcher" },
-            { id: "firstBase", name: "1ra Base" },
-            { id: "secondBase", name: "2da Base" },
-            { id: "thirdBase", name: "3ra Base" },
-            { id: "shortstop", name: "Shortstop" },
-            { id: "leftField", name: "J. Izquierdo" },
-            { id: "centerField", name: "J. Central" },
-            { id: "rightField", name: "J. Derecho" },
-            { id: "extra", name: "DH/Extra" }
+            { id: "pitcher", name: "Pitcher", x: 50, y: 50 },
+            { id: "catcher", name: "Catcher", x: 50, y: 80 },
+            { id: "firstBase", name: "1B", x: 80, y: 20 },
+            { id: "secondBase", name: "2B", x: 50, y: 30 },
+            { id: "thirdBase", name: "3B", x: 20, y: 20 },
+            { id: "shortstop", name: "SS", x: 40, y: 20 },
+            { id: "leftField", name: "LF", x: 20, y: 70 },
+            { id: "centerField", name: "CF", x: 50, y: 10 },
+            { id: "rightField", name: "RF", x: 80, y: 70 }
         ];
 
         // Elementos del DOM
@@ -428,6 +375,8 @@
         const addPlayersBtn = document.getElementById('addPlayersBtn');
         const addPlayersSection = document.getElementById('addPlayersSection');
         const newPlayerNameInput = document.getElementById('newPlayerName');
+        const team1Field = document.getElementById('team1Field');
+        const team2Field = document.getElementById('team2Field');
 
         // Inicializar el draft
         function initializeDraft() {
@@ -462,16 +411,14 @@
             
             // Inicializar jugadores de los equipos
             positions.forEach(pos => {
-                if (pos.id !== 'extra') {
-                    team1.players[pos.id] = null;
-                    team2.players[pos.id] = null;
-                }
+                team1.players[pos.id] = null;
+                team2.players[pos.id] = null;
             });
             team1.extras = [];
             team2.extras = [];
             
-            // Actualizar tablas de equipos
-            updateTeamTables();
+            // Crear campos visuales
+            createFieldVisualization();
             
             // Actualizar lista de jugadores disponibles
             updateAvailablePlayers();
@@ -484,35 +431,101 @@
             draftScreen.classList.remove('hidden');
         }
 
-        // Actualizar las tablas de los equipos
-        function updateTeamTables() {
+        // Crear la visualización del campo para ambos equipos
+        function createFieldVisualization() {
+            team1Field.innerHTML = '';
+            team2Field.innerHTML = '';
+            
+            // Base paths (diamonds)
+            createBasePath(team1Field);
+            createBasePath(team2Field);
+            
+            // Posiciones
             positions.forEach(pos => {
-                if (pos.id !== 'extra') {
-                    const team1Cell = document.getElementById(`team1-${pos.id}`);
-                    const team2Cell = document.getElementById(`team2-${pos.id}`);
-                    
-                    team1Cell.textContent = team1.players[pos.id] || "(Vacante)";
-                    team2Cell.textContent = team2.players[pos.id] || "(Vacante)";
-                    
-                    // Actualizar clases según si está ocupado o no
-                    if (team1.players[pos.id]) {
-                        team1Cell.classList.add('selected');
-                    } else {
-                        team1Cell.classList.remove('selected');
-                    }
-                    
-                    if (team2.players[pos.id]) {
-                        team2Cell.classList.add('selected');
-                    } else {
-                        team2Cell.classList.remove('selected');
-                    }
+                createPositionElement(team1Field, pos, 1);
+                createPositionElement(team2Field, pos, 2);
+            });
+            
+            // Actualizar extras
+            updateExtrasDisplay();
+        }
+
+        // Crear el diamante de bases
+        function createBasePath(container) {
+            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svg.setAttribute("width", "100%");
+            svg.setAttribute("height", "100%");
+            svg.setAttribute("viewBox", "0 0 100 100");
+            svg.style.position = "absolute";
+            svg.style.top = "0";
+            svg.style.left = "0";
+            
+            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            path.setAttribute("d", "M50,80 L80,50 L50,20 L20,50 Z");
+            path.setAttribute("stroke", "#5a9216");
+            path.setAttribute("stroke-width", "2");
+            path.setAttribute("fill", "none");
+            
+            svg.appendChild(path);
+            container.appendChild(svg);
+        }
+
+        // Crear elemento de posición en el campo
+        function createPositionElement(container, pos, team) {
+            const positionElement = document.createElement('div');
+            positionElement.className = 'field-position';
+            positionElement.id = `team${team}-${pos.id}`;
+            positionElement.style.left = `${pos.x}%`;
+            positionElement.style.top = `${pos.y}%`;
+            positionElement.dataset.position = pos.id;
+            positionElement.dataset.team = team;
+            positionElement.innerHTML = `<div>${pos.name}</div><div class="player-name"></div>`;
+            
+            positionElement.addEventListener('dragover', allowDrop);
+            positionElement.addEventListener('dragleave', dragLeave);
+            positionElement.addEventListener('drop', (e) => dropPlayer(e, pos.id, team));
+            
+            container.appendChild(positionElement);
+        }
+
+        // Actualizar extras
+        function updateExtrasDisplay() {
+            const team1Extras = document.getElementById('team1-extras');
+            const team2Extras = document.getElementById('team2-extras');
+            
+            team1Extras.innerHTML = team1.extras.length > 0 ? 
+                team1.extras.map(p => `<div style="background-color: #4CAF50; color: white; padding: 5px; margin: 2px; border-radius: 3px;">${p}</div>`).join('') : 
+                "Arrastra jugadores aquí";
+                
+            team2Extras.innerHTML = team2.extras.length > 0 ? 
+                team2.extras.map(p => `<div style="background-color: #4CAF50; color: white; padding: 5px; margin: 2px; border-radius: 3px;">${p}</div>`).join('') : 
+                "Arrastra jugadores aquí";
+        }
+
+        // Actualizar las posiciones en el campo
+        function updateFieldPositions() {
+            positions.forEach(pos => {
+                const team1Pos = document.getElementById(`team1-${pos.id}`);
+                const team2Pos = document.getElementById(`team2-${pos.id}`);
+                
+                if (team1.players[pos.id]) {
+                    team1Pos.classList.add('filled');
+                    team1Pos.querySelector('.player-name').textContent = team1.players[pos.id];
                 } else {
-                    document.getElementById(`team1-${pos.id}`).textContent = 
-                        team1.extras.length > 0 ? team1.extras.join(", ") : "(Vacante)";
-                    document.getElementById(`team2-${pos.id}`).textContent = 
-                        team2.extras.length > 0 ? team2.extras.join(", ") : "(Vacante)";
+                    team1Pos.classList.remove('filled');
+                    team1Pos.querySelector('.player-name').textContent = '';
+                }
+                
+                if (team2.players[pos.id]) {
+                    team2Pos.classList.add('filled');
+                    team2Pos.querySelector('.player-name').textContent = team2.players[pos.id];
+                } else {
+                    team2Pos.classList.remove('filled');
+                    team2Pos.querySelector('.player-name').textContent = '';
                 }
             });
+            
+            updateExtrasDisplay();
         }
 
         // Actualizar lista de jugadores disponibles
@@ -551,13 +564,11 @@
             e.currentTarget.classList.remove('highlight');
         }
 
-        function dropPlayer(e) {
+        function dropPlayer(e, positionId, team) {
             e.preventDefault();
             e.currentTarget.classList.remove('highlight');
             
             const player = e.dataTransfer.getData('text/plain');
-            const positionId = e.currentTarget.dataset.position;
-            const team = parseInt(e.currentTarget.dataset.team);
             
             // Verificar que sea el turno del equipo correcto (excepto para extras)
             if (positionId !== 'extra' && currentPickingTeam !== team) {
@@ -611,7 +622,7 @@
             }
             
             // Actualizar UI
-            updateTeamTables();
+            updateFieldPositions();
             updateAvailablePlayers();
             updateTurnInfo();
         }
@@ -677,22 +688,20 @@
             
             let hasPlayers1 = false;
             positions.forEach(pos => {
-                if (pos.id !== 'extra') {
-                    if (team1.players[pos.id]) {
-                        doc.setFontSize(12);
-                        doc.text(`- ${pos.name}: ${team1.players[pos.id]}`, 25, yOffset);
-                        yOffset += lineHeight;
-                        hasPlayers1 = true;
-                    }
-                } else {
-                    if (team1.extras.length > 0) {
-                        doc.setFontSize(12);
-                        doc.text(`- ${pos.name}: ${team1.extras.join(", ")}`, 25, yOffset);
-                        yOffset += lineHeight;
-                        hasPlayers1 = true;
-                    }
+                if (team1.players[pos.id]) {
+                    doc.setFontSize(12);
+                    doc.text(`- ${pos.name}: ${team1.players[pos.id]}`, 25, yOffset);
+                    yOffset += lineHeight;
+                    hasPlayers1 = true;
                 }
             });
+            
+            if (team1.extras.length > 0) {
+                doc.setFontSize(12);
+                doc.text(`- DH/Extras: ${team1.extras.join(", ")}`, 25, yOffset);
+                yOffset += lineHeight;
+                hasPlayers1 = true;
+            }
             
             if (!hasPlayers1) {
                 doc.setFontSize(12);
@@ -709,22 +718,20 @@
             
             let hasPlayers2 = false;
             positions.forEach(pos => {
-                if (pos.id !== 'extra') {
-                    if (team2.players[pos.id]) {
-                        doc.setFontSize(12);
-                        doc.text(`- ${pos.name}: ${team2.players[pos.id]}`, 25, yOffset);
-                        yOffset += lineHeight;
-                        hasPlayers2 = true;
-                    }
-                } else {
-                    if (team2.extras.length > 0) {
-                        doc.setFontSize(12);
-                        doc.text(`- ${pos.name}: ${team2.extras.join(", ")}`, 25, yOffset);
-                        yOffset += lineHeight;
-                        hasPlayers2 = true;
-                    }
+                if (team2.players[pos.id]) {
+                    doc.setFontSize(12);
+                    doc.text(`- ${pos.name}: ${team2.players[pos.id]}`, 25, yOffset);
+                    yOffset += lineHeight;
+                    hasPlayers2 = true;
                 }
             });
+            
+            if (team2.extras.length > 0) {
+                doc.setFontSize(12);
+                doc.text(`- DH/Extras: ${team2.extras.join(", ")}`, 25, yOffset);
+                yOffset += lineHeight;
+                hasPlayers2 = true;
+            }
             
             if (!hasPlayers2) {
                 doc.setFontSize(12);
